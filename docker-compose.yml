@@ -1,4 +1,4 @@
-gitname: sbd-lab
+name: sbd-lab
 
 services:
   postgres-db:
