@@ -1,4 +1,4 @@
--- Active: 1790030510351@@127.0.0.1@5432@bd_hortifruti@public
+-- Active: 1790201652845@@127.0.0.1@5432@bd_hortifruti@public
 CREATE DATABASE bd_hortifruti;
 
 
@@ -76,20 +76,18 @@ VALUES
 -- 2026-08-03, segunda-feira
 (3017, '2026-08-08', NULL, 5, 'Tomate',        'Legume', 'Kg', 1.340, 8.99 ),
 (3017, '2026-08-08', NULL, 10, 'Alface_Crespa','Legume', 'UN', 2,     9.90),
-(3017, '2026-08-08', NULL, 4,  'Morango'       ,'Fruma', 'UN', 1,     9.90) 
+(3017, '2026-08-08', NULL, 4,  'Morango'       ,'Fruta', 'UN', 1,     9.90) 
 
 
 SELECT * FROM itens_venda;
 
 /*Consulta 1*/
 
-SELECT
+SELECT DISTINCT
 produto_id AS "produto",
 produto_nome AS "nome",
 unidade as "unidade_medida",
 categoria as "categoria"
-
-
 
 FROM
 itens_venda
@@ -105,14 +103,17 @@ venda_id,
 produto_nome,
 valor_unitario,
 categoria
-
-
 FROM
 itens_venda
-
 WHERE
-categoria IN( "Legume", "Verdura")
-AND valor_unitario BETWEEN (3.000 AND 5.000);
+categoria IN('Legume', 'Verdura')
+
+AND 
+valor_unitario BETWEEN (3.000 AND 5.000)
+
+ORDER BY
+valor_unitario DESC,
+venda_id;
 
 
 /*Consulta 3*/
@@ -124,6 +125,10 @@ valor_unitario
 FROM
 itens_venda
 WHERE produto_nome LIKE '%Batata%';
+                                       
+ORDER BY
+data_venda,
+venda_id;
 
 
 /*Consulta 4*/
@@ -136,29 +141,37 @@ quantidade
 
 FROM itens_venda
 
+WHERE
+bairro_entrega IS NULL
+
 ORDER BY
 venda_id;
 
 
 /*Consulta 5 Incompleta*/
 SELECT
+venda_id,
+quantidade,
+unidade,
 valor_unitario,
-ROUND(quantidade * valor_unitario,2) AS "Valor Total"
-
+ROUND(quantidade * valor_unitario,2) AS  valor_item
 FROM
 itens_venda
-
 ORDER BY
-valor_unitario ASC;
+valor_item DESC,
+venda_id
+
+LIMIT 
+5 OFFSET 5;
 
 
-/*Consulta 6 Fazer completo*/
+/*Consulta 6 */
 SELECT 
 venda_id,
 data_venda,
-bairro_entrega AS destino,
+COALESCE(bairro_entrega, 'Retirada do balcao') AS "Destino",
 COUNT(produto_id) AS quantidade_item,
-SUM(quantidade* valor_unitario) AS valor_total
+ROUND(SUM(quantidade* valor_unitario),2) AS valor_total
 
 FROM itens_venda
 
@@ -168,18 +181,22 @@ data_venda,
 bairro_entrega
 
 ORDER BY
-valor_total;
+valor_total DESC;
+
+LIMIT 
+5 OFFSET 5;
 
 
 
 
 
 /*Consulta 7*/
-SELECT DISTINCT 
-data_venda, 
+SELECT  
+data_venda,
+COUNT(DISTINCT venda_id), 
 SUM(quantidade) AS quantidade,
 SUM(valor_unitario) AS valor_unitario,
-SUM(valor_unitario * quantidade) AS faturamento
+ROUND(SUM(valor_unitario * quantidade),2) AS faturamento
 
 FROM itens_venda
 
