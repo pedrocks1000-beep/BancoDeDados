@@ -1,4 +1,4 @@
--- Active: 1790008618984@@127.0.0.1@5432@bd_hortifruti@public
+-- Active: 1790030510351@@127.0.0.1@5432@bd_hortifruti@public
 CREATE DATABASE bd_hortifruti;
 
 
@@ -297,6 +297,15 @@ CREATE TABLE turma(
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nome_turma TEXT NOT NULL
 
+
+);
+
+CREATE TABLE inscricao(
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    aluno_id INTEGER NOT NULL,
+    turma_id INTEGER NOT NULL,
+    FOREIGN KEY (aluno_id) REFERENCES Aluno(id),
+    FOREIGN KEY (turma_id) REFERENCES Turma(id)
 
 );
 
